@@ -1,0 +1,65 @@
+(c-system-include "string.h")
+(c-system-include "syslog.h")
+
+(c-declare "
+void my_openlog(const char *ident, const char *facility_string) {
+    int facility = LOG_USER;
+
+    if (!strcmp(facility_string, \"auth\")) {
+        facility = LOG_AUTH;
+    } else if (!strcmp(facility_string, \"authpriv\")) {
+        facility = LOG_AUTHPRIV;
+    } else if (!strcmp(facility_string, \"cron\")) {
+        facility = LOG_CRON;
+    } else if (!strcmp(facility_string, \"daemon\")) {
+        facility = LOG_DAEMON;
+    } else if (!strcmp(facility_string, \"ftp\")) {
+        facility = LOG_FTP;
+    } else if (!strcmp(facility_string, \"kern\")) {
+        facility = LOG_KERN;
+    } else if (!strcmp(facility_string, \"lpr\")) {
+        facility = LOG_LPR;
+    } else if (!strcmp(facility_string, \"mail\")) {
+        facility = LOG_MAIL;
+    } else if (!strcmp(facility_string, \"news\")) {
+        facility = LOG_NEWS;
+    } else if (!strcmp(facility_string, \"syslog\")) {
+        facility = LOG_SYSLOG;
+    } else if (!strcmp(facility_string, \"user\")) {
+        facility = LOG_USER;
+    } else if (!strcmp(facility_string, \"uucp\")) {
+        facility = LOG_UUCP;
+    }
+    openlog(ident, 0, facility);
+}")
+
+(c-declare "
+void my_syslog(const char *level, const char *message) {
+    int priority;
+
+    priority = LOG_INFO;
+    if (!strcmp(level, \"emerg\")) {
+        priority = LOG_EMERG;
+    } else if (!strcmp(level, \"alert\")) {
+        priority = LOG_ALERT;
+    } else if (!strcmp(level, \"crit\")) {
+        priority = LOG_CRIT;
+    } else if (!strcmp(level, \"err\")) {
+        priority = LOG_ERR;
+    } else if (!strcmp(level, \"warning\")) {
+        priority = LOG_WARNING;
+    } else if (!strcmp(level, \"notice\")) {
+        priority = LOG_NOTICE;
+    } else if (!strcmp(level, \"info\")) {
+        priority = LOG_INFO;
+    } else if (!strcmp(level, \"debug\")) {
+        priority = LOG_DEBUG;
+    }
+    syslog(priority, \"%s\", message);
+}")
+
+(define-c void (%openlog "my_openlog")
+  ((const string) (const string)))
+
+(define-c void (%syslog "my_syslog")
+  ((const string) (const string)))
